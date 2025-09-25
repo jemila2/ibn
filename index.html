@@ -3,10 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Daily Life Manager - Comrade Ibn Imam</title>
+    <title>Daily Life Manager - Comrade Ibn Imam</title> 
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#7c3aed">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Life Manager">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📝</text></svg>">
+    
+    <!-- External Libraries -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -135,9 +145,60 @@
             backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
+        
+        /* PWA Install Button */
+        #installButton {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #7c3aed;
+            color: white;
+            padding: 12px 16px;
+            border-radius: 50px;
+            border: none;
+            font-size: 14px;
+            font-weight: 600;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        #installButton:hover {
+            background: #6d28d9;
+            transform: translateY(-2px);
+        }
+        
+        /* Mobile optimizations */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .login-container {
+                margin: 10px;
+            }
+            
+            #mainApp {
+                margin: 10px;
+            }
+            
+            .grid-cols-4 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
     </style>
 </head>
 <body class="flex items-center justify-center min-h-screen p-4">
+    
+    <!-- PWA Install Button -->
+    <button id="installButton" aria-label="Install App">
+        <i class="fas fa-download"></i>
+        Install App
+    </button>
     
     <!-- Setup Screen (Shows on first use) -->
     <div id="setupScreen" class="login-container max-w-md w-full rounded-3xl shadow-2xl p-8 hidden">
@@ -374,6 +435,51 @@
     </div>
 
     <script>
+        // PWA Installation Handler
+        class PWAInstaller {
+            constructor() {
+                this.installButton = document.getElementById('installButton');
+                this.deferredPrompt = null;
+                this.init();
+            }
+            
+            init() {
+                window.addEventListener('beforeinstallprompt', (e) => {
+                    e.preventDefault();
+                    this.deferredPrompt = e;
+                    this.showInstallButton();
+                });
+                
+                this.installButton.addEventListener('click', () => this.installApp());
+                
+                window.addEventListener('appinstalled', () => {
+                    this.hideInstallButton();
+                    console.log('App was installed successfully!');
+                });
+            }
+            
+            showInstallButton() {
+                this.installButton.style.display = 'flex';
+            }
+            
+            hideInstallButton() {
+                this.installButton.style.display = 'none';
+            }
+            
+            installApp() {
+                if (this.deferredPrompt) {
+                    this.deferredPrompt.prompt();
+                    this.deferredPrompt.userChoice.then((choiceResult) => {
+                        if (choiceResult.outcome === 'accepted') {
+                            console.log('User accepted the install prompt');
+                        }
+                        this.deferredPrompt = null;
+                        this.hideInstallButton();
+                    });
+                }
+            }
+        }
+
         // Enhanced authentication system with user-set passwords
         class AuthManager {
             constructor() {
@@ -409,14 +515,12 @@
             showSetup() {
                 this.hideAllScreens();
                 this.setupScreen.classList.remove('hidden');
-                
                 this.setupForm.addEventListener('submit', (e) => this.handleSetup(e));
             }
             
             showLogin() {
                 this.hideAllScreens();
                 this.loginScreen.classList.remove('hidden');
-                
                 this.loginForm.addEventListener('submit', (e) => this.handleLogin(e));
                 document.getElementById('resetPasswordBtn').addEventListener('click', () => this.showReset());
             }
@@ -424,18 +528,16 @@
             showReset() {
                 this.hideAllScreens();
                 this.resetScreen.classList.remove('hidden');
-                
                 document.getElementById('confirmResetBtn').addEventListener('click', () => this.handleReset());
                 document.getElementById('cancelResetBtn').addEventListener('click', () => this.showLogin());
             }
             
             handleSetup(e) {
                 e.preventDefault();
-                
                 const userName = document.getElementById('userName').value.trim();
                 const newPassword = document.getElementById('newPassword').value;
                 const confirmPassword = document.getElementById('confirmPassword').value;
-                
+
                 if (newPassword !== confirmPassword) {
                     this.showSetupError('Passwords do not match');
                     return;
@@ -446,7 +548,6 @@
                     return;
                 }
                 
-                // Save user configuration
                 this.userConfig = {
                     userName: userName,
                     password: newPassword,
@@ -454,8 +555,6 @@
                 };
                 
                 localStorage.setItem('dailyLifeConfig', JSON.stringify(this.userConfig));
-                
-                // Auto-login after setup
                 this.loginAfterSetup(newPassword);
             }
             
@@ -466,13 +565,11 @@
                     expiresIn: 24 * 60 * 60 * 1000
                 };
                 localStorage.setItem('dailyLifeAuth', JSON.stringify(loginData));
-                
                 this.showApp();
             }
             
             handleLogin(e) {
                 e.preventDefault();
-                
                 const password = document.getElementById('password').value;
                 
                 if (password === this.userConfig.password) {
@@ -482,7 +579,6 @@
                         expiresIn: 24 * 60 * 60 * 1000
                     };
                     localStorage.setItem('dailyLifeAuth', JSON.stringify(loginData));
-                    
                     this.showApp();
                 } else {
                     this.showLoginError('Invalid password');
@@ -503,12 +599,10 @@
                 if (!authData) return false;
                 
                 const { loggedIn, timestamp, expiresIn } = JSON.parse(authData);
-                
                 if (Date.now() - timestamp > expiresIn) {
                     localStorage.removeItem('dailyLifeAuth');
                     return false;
                 }
-                
                 return loggedIn;
             }
             
@@ -840,8 +934,10 @@
             }
         }
 
+        // Initialize everything when DOM is loaded
         document.addEventListener('DOMContentLoaded', () => {
-            new DailyLifeManager();
+            new PWAInstaller(); // Initialize PWA installer
+            new DailyLifeManager(); // Initialize your app
         });
     </script>
 </body>
