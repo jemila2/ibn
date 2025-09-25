@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,9 +11,12 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Life Manager">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📝</text></svg>">
+    <!-- <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📝</text></svg>"> -->
     
-    <!-- External Libraries -->
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22Daily%20Life%20Manager%22%2C%22short_name%22%3A%22LifeManager%22%2C%22description%22%3A%22Elegant%20daily%20life%20organizer%20for%20Comrade%20Ibn%20Imam%22%2C%22start_url%22%3A%22.%2F%22%2C%22display%22%3A%22standalone%22%2C%22theme_color%22%3A%22%237c3aed%22%2C%22background_color%22%3A%22%230f172a%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%3Bbase64%2CPHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgdmlld0JveD0iMCAwIDE5MiAxOTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI%2BCjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiByeD0iMjQiIGZpbGw9IiM3YzNhZWQiLz4KPHN2ZyB4PSI0OCIgeT0iNDgiIHdpZHRoPSI5NiIgaGVpZ2h0PSI5NiIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmYiIHN0cm9rZS13aWR0aD0iMiI%2BCjxwYXRoIGQ9Ik0xMSA0SDlBMiAyIDAgMCAwIDcgNnYxNGEyIDIgMCAwIDAgMiAyaDZhMiAyIDAgMCAwIDItMnYtMW0wLTRhMiAyIDAgMCAxIDItMmg0YTIgMiAwIDAgMSAyIDJ2NGEyIDIgMCAwIDEtMiAyaC00YTIgMiAwIDAgMS0yLTJ2LTRaIi8%2BCjwvc3ZnPgo8L3N2Zz4K%22%2C%22sizes%22%3A%221OTJ4MTky%22%2C%22type%22%3A%22aW1hZ2Uvc3ZnK3htbC%22%7D%5D%7D">
+    
+    <!-- Tailwind CSS via CDN (development only) -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -172,6 +176,28 @@
             transform: translateY(-2px);
         }
         
+        /* Install App Button in Main Interface */
+        .install-app-btn {
+            background: linear-gradient(135deg, #10b981 0%, #047857 100%);
+            color: white;
+            padding: 10px 16px;
+            border-radius: 10px;
+            border: none;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+        }
+        
+        .install-app-btn:hover {
+            background: linear-gradient(135deg, #0da271 0%, #036445 100%);
+            transform: translateY(-2px);
+        }
+        
         /* Mobile optimizations */
         @media (max-width: 768px) {
             body {
@@ -189,12 +215,17 @@
             .grid-cols-4 {
                 grid-template-columns: repeat(2, 1fr);
             }
+            
+            #installButton {
+                bottom: 70px;
+                right: 20px;
+            }
         }
     </style>
 </head>
 <body class="flex items-center justify-center min-h-screen p-4">
     
-    <!-- PWA Install Button -->
+    <!-- PWA Install Button (Floating) -->
     <button id="installButton" aria-label="Install App">
         <i class="fas fa-download"></i>
         Install App
@@ -306,7 +337,7 @@
                     <p class="text-purple-100 text-lg" id="userGreeting">For Comrade Ibn Imam</p>
                     <p class="text-purple-200 text-sm mt-1">Elegant. Organized.</p>
                 </div>
-                <div class="flex items-center space-x-4">
+                <div class="flex items-center space-x-4" id="userSection">
                     <div class="bg-white/20 p-4 rounded-2xl text-center">
                         <i class="fas fa-user-tie text-3xl mb-2"></i>
                         <p class="text-sm font-medium" id="userDisplayName">Comrade Imam</p>
@@ -377,6 +408,9 @@
                 </button>
                 
                 <div class="flex space-x-3">
+                    <button id="installAppMain" class="install-app-btn">
+                        <i class="fas fa-mobile-alt mr-2"></i>Save to Phone
+                    </button>
                     <button id="exportBtn" class="px-6 py-3 bg-green-600 text-white rounded-xl hover:bg-green-700 transition-colors">
                         <i class="fas fa-file-export mr-2"></i>Export
                     </button>
@@ -435,47 +469,137 @@
     </div>
 
     <script>
-        // PWA Installation Handler
+        // Enhanced PWA Installation Handler
         class PWAInstaller {
             constructor() {
                 this.installButton = document.getElementById('installButton');
+                this.installAppMain = document.getElementById('installAppMain');
                 this.deferredPrompt = null;
                 this.init();
             }
             
             init() {
+                // Listen for beforeinstallprompt event
                 window.addEventListener('beforeinstallprompt', (e) => {
+                    console.log('PWA installation prompted');
                     e.preventDefault();
                     this.deferredPrompt = e;
-                    this.showInstallButton();
+                    this.showInstallButtons();
                 });
                 
-                this.installButton.addEventListener('click', () => this.installApp());
-                
+                // Listen for app installed event
                 window.addEventListener('appinstalled', () => {
-                    this.hideInstallButton();
-                    console.log('App was installed successfully!');
+                    console.log('PWA was installed');
+                    this.hideInstallButtons();
+                    this.showNotification('App installed successfully! You can now access it from your home screen.', 'success');
                 });
+                
+                // Add click events to install buttons
+                this.installButton.addEventListener('click', () => this.installApp());
+                if (this.installAppMain) {
+                    this.installAppMain.addEventListener('click', () => this.installApp());
+                }
+                
+                // Check if app is already installed
+                this.checkIfAppIsInstalled();
             }
             
-            showInstallButton() {
+            showInstallButtons() {
                 this.installButton.style.display = 'flex';
+                this.installButton.classList.add('pulse-gentle');
+                
+                if (this.installAppMain) {
+                    this.installAppMain.style.display = 'flex';
+                }
             }
             
-            hideInstallButton() {
+            hideInstallButtons() {
                 this.installButton.style.display = 'none';
+                this.installButton.classList.remove('pulse-gentle');
+                
+                if (this.installAppMain) {
+                    this.installAppMain.style.display = 'none';
+                }
             }
             
             installApp() {
                 if (this.deferredPrompt) {
                     this.deferredPrompt.prompt();
+                    
                     this.deferredPrompt.userChoice.then((choiceResult) => {
                         if (choiceResult.outcome === 'accepted') {
                             console.log('User accepted the install prompt');
+                            this.showNotification('Installing app to your home screen...', 'info');
+                        } else {
+                            console.log('User dismissed the install prompt');
+                            this.showNotification('You can always install later using the "Save to Phone" button', 'info');
                         }
                         this.deferredPrompt = null;
-                        this.hideInstallButton();
                     });
+                } else {
+                    this.showNotification('Your browser does not support app installation. Try using Chrome or Edge on Android.', 'error');
+                }
+            }
+            
+            checkIfAppIsInstalled() {
+                // Check if the app is running in standalone mode
+                if (window.matchMedia('(display-mode: standalone)').matches) {
+                    console.log('App is running in standalone mode');
+                    this.hideInstallButtons();
+                }
+                
+                // Check for other indicators of PWA installation
+                if (window.navigator.standalone === true) {
+                    console.log('App is installed on iOS');
+                    this.hideInstallButtons();
+                }
+            }
+            
+            showNotification(message, type) {
+                const notification = document.createElement('div');
+                notification.className = `notification ${type}`;
+                let icon = type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle';
+                notification.innerHTML = `<i class="fas ${icon} mr-2"></i> ${message}`;
+                document.body.appendChild(notification);
+                setTimeout(() => notification.classList.add('show'), 10);
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                    setTimeout(() => document.body.contains(notification) && document.body.removeChild(notification), 300);
+                }, 5000);
+            }
+        }
+
+        // Service Worker Registration (only works on HTTPS or localhost)
+        class ServiceWorkerManager {
+            constructor() {
+                this.init();
+            }
+            
+            async init() {
+                // Only register service worker if we're on a supported protocol
+                if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
+                    try {
+                        // Create a simple service worker for caching
+                        const swContent = `
+                            self.addEventListener('install', (event) => {
+                                console.log('Service Worker installed');
+                            });
+                            
+                            self.addEventListener('fetch', (event) => {
+                                // Basic fetch handler
+                                event.respondWith(fetch(event.request));
+                            });
+                        `;
+                        
+                        const blob = new Blob([swContent], { type: 'application/javascript' });
+                        const swURL = URL.createObjectURL(blob);
+                        
+                        const registration = await navigator.serviceWorker.register(swURL);
+                        console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                    } catch (error) {
+                        console.log('ServiceWorker registration failed: ', error);
+                        // This is normal when running from file:// protocol
+                    }
                 }
             }
         }
@@ -672,14 +796,15 @@
             }
             
             updateUserInfo() {
+              
                 const userName = this.authManager.getUserName();
                 document.getElementById('userGreeting').textContent = `For ${userName}`;
                 document.getElementById('userDisplayName').textContent = userName;
             }
             
             addLogoutButton() {
-                const header = document.querySelector('.comrade-gradient');
-                const userSection = header.querySelector('.flex.items-center.justify-between');
+                const userSection = document.getElementById('userSection');
+                if (!userSection) return;
                 
                 const logoutBtn = document.createElement('button');
                 logoutBtn.className = 'bg-white/20 p-2 rounded-lg hover:bg-white/30 transition-colors text-white text-sm';
@@ -937,6 +1062,7 @@
         // Initialize everything when DOM is loaded
         document.addEventListener('DOMContentLoaded', () => {
             new PWAInstaller(); // Initialize PWA installer
+            new ServiceWorkerManager(); // Initialize Service Worker
             new DailyLifeManager(); // Initialize your app
         });
     </script>
