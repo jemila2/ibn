@@ -11,7 +11,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Life Manager">
-    <!-- <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📝</text></svg>"> -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📝</text></svg>">
     
     <!-- PWA Manifest -->
     <link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22Daily%20Life%20Manager%22%2C%22short_name%22%3A%22LifeManager%22%2C%22description%22%3A%22Elegant%20daily%20life%20organizer%20for%20Comrade%20Ibn%20Imam%22%2C%22start_url%22%3A%22.%2F%22%2C%22display%22%3A%22standalone%22%2C%22theme_color%22%3A%22%237c3aed%22%2C%22background_color%22%3A%22%230f172a%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%3Bbase64%2CPHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgdmlld0JveD0iMCAwIDE5MiAxOTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI%2BCjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiByeD0iMjQiIGZpbGw9IiM3YzNhZWQiLz4KPHN2ZyB4PSI0OCIgeT0iNDgiIHdpZHRoPSI5NiIgaGVpZ2h0PSI5NiIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmYiIHN0cm9rZS13aWR0aD0iMiI%2BCjxwYXRoIGQ9Ik0xMSA0SDlBMiAyIDAgMCAwIDcgNnYxNGEyIDIgMCAwIDAgMiAyaDZhMiAyIDAgMCAwIDItMnYtMW0wLTRhMiAyIDAgMCAxIDItMmg0YTIgMiAwIDAgMSAyIDJ2NGEyIDIgMCAwIDEtMiAyaC00YTIgMiAwIDAgMS0yLTJ2LTRaIi8%2BCjwvc3ZnPgo8L3N2Zz4K%22%2C%22sizes%22%3A%221OTJ4MTky%22%2C%22type%22%3A%22aW1hZ2Uvc3ZnK3htbC%22%7D%5D%7D">
@@ -198,6 +198,30 @@
             transform: translateY(-2px);
         }
         
+        /* Instructions Modal */
+        .instructions-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+        
+        .instructions-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
         /* Mobile optimizations */
         @media (max-width: 768px) {
             body {
@@ -224,6 +248,52 @@
     </style>
 </head>
 <body class="flex items-center justify-center min-h-screen p-4">
+    
+    <!-- Instructions Modal -->
+    <div id="instructionsModal" class="instructions-modal">
+        <div class="instructions-content">
+            <h2 class="text-2xl font-bold mb-4 elegant-font">How to Install App</h2>
+            
+            <div class="space-y-4">
+                <!-- Android Instructions -->
+                <div>
+                    <h3 class="font-semibold text-lg mb-2">📱 For Android Phones:</h3>
+                    <ol class="list-decimal list-inside space-y-2 text-gray-700">
+                        <li>Open in <strong>Chrome browser</strong> (not Safari)</li>
+                        <li>Tap the <strong>three dots menu</strong> (⋮) in top right</li>
+                        <li>Select <strong>"Add to Home screen"</strong> or <strong>"Install app"</strong></li>
+                        <li>Confirm the installation</li>
+                    </ol>
+                </div>
+                
+                <!-- iOS Instructions -->
+                <div>
+                    <h3 class="font-semibold text-lg mb-2">📱 For iPhones/iPads:</h3>
+                    <ol class="list-decimal list-inside space-y-2 text-gray-700">
+                        <li>Open in <strong>Safari browser</strong></li>
+                        <li>Tap the <strong>Share button</strong> (📤) at the bottom</li>
+                        <li>Scroll down and select <strong>"Add to Home Screen"</strong></li>
+                        <li>Tap "Add" in top right corner</li>
+                    </ol>
+                </div>
+                
+                <!-- Desktop Instructions -->
+                <div>
+                    <h3 class="font-semibold text-lg mb-2">💻 For Desktop Computers:</h3>
+                    <p class="text-gray-700">Look for the install icon in your browser's address bar</p>
+                </div>
+            </div>
+            
+            <div class="mt-6 flex justify-between">
+                <button id="closeInstructions" class="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400 transition-colors">
+                    Close
+                </button>
+                <button id="tryInstallAgain" class="px-4 py-2 comrade-gradient text-white rounded-lg hover:shadow-lg transition-all">
+                    Try Install Again
+                </button>
+            </div>
+        </div>
+    </div>
     
     <!-- PWA Install Button (Floating) -->
     <button id="installButton" aria-label="Install App">
@@ -474,6 +544,9 @@
             constructor() {
                 this.installButton = document.getElementById('installButton');
                 this.installAppMain = document.getElementById('installAppMain');
+                this.instructionsModal = document.getElementById('instructionsModal');
+                this.closeInstructions = document.getElementById('closeInstructions');
+                this.tryInstallAgain = document.getElementById('tryInstallAgain');
                 this.deferredPrompt = null;
                 this.init();
             }
@@ -491,7 +564,7 @@
                 window.addEventListener('appinstalled', () => {
                     console.log('PWA was installed');
                     this.hideInstallButtons();
-                    this.showNotification('App installed successfully! You can now access it from your home screen.', 'success');
+                    this.showNotification('🎉 App installed successfully! You can now access it from your home screen.', 'success');
                 });
                 
                 // Add click events to install buttons
@@ -500,8 +573,22 @@
                     this.installAppMain.addEventListener('click', () => this.installApp());
                 }
                 
+                // Instructions modal events
+                this.closeInstructions.addEventListener('click', () => this.hideInstructions());
+                this.tryInstallAgain.addEventListener('click', () => {
+                    this.hideInstructions();
+                    this.installApp();
+                });
+                
                 // Check if app is already installed
                 this.checkIfAppIsInstalled();
+                
+                // Show install button after a delay if not auto-prompted
+                setTimeout(() => {
+                    if (!this.deferredPrompt) {
+                        this.showInstallButtons();
+                    }
+                }, 3000);
             }
             
             showInstallButtons() {
@@ -532,13 +619,21 @@
                             this.showNotification('Installing app to your home screen...', 'info');
                         } else {
                             console.log('User dismissed the install prompt');
-                            this.showNotification('You can always install later using the "Save to Phone" button', 'info');
+                            this.showInstructions();
                         }
                         this.deferredPrompt = null;
                     });
                 } else {
-                    this.showNotification('Your browser does not support app installation. Try using Chrome or Edge on Android.', 'error');
+                    this.showInstructions();
                 }
+            }
+            
+            showInstructions() {
+                this.instructionsModal.style.display = 'flex';
+            }
+            
+            hideInstructions() {
+                this.instructionsModal.style.display = 'none';
             }
             
             checkIfAppIsInstalled() {
@@ -546,13 +641,17 @@
                 if (window.matchMedia('(display-mode: standalone)').matches) {
                     console.log('App is running in standalone mode');
                     this.hideInstallButtons();
+                    return true;
                 }
                 
                 // Check for other indicators of PWA installation
                 if (window.navigator.standalone === true) {
                     console.log('App is installed on iOS');
                     this.hideInstallButtons();
+                    return true;
                 }
+                
+                return false;
             }
             
             showNotification(message, type) {
@@ -566,41 +665,6 @@
                     notification.classList.remove('show');
                     setTimeout(() => document.body.contains(notification) && document.body.removeChild(notification), 300);
                 }, 5000);
-            }
-        }
-
-        // Service Worker Registration (only works on HTTPS or localhost)
-        class ServiceWorkerManager {
-            constructor() {
-                this.init();
-            }
-            
-            async init() {
-                // Only register service worker if we're on a supported protocol
-                if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
-                    try {
-                        // Create a simple service worker for caching
-                        const swContent = `
-                            self.addEventListener('install', (event) => {
-                                console.log('Service Worker installed');
-                            });
-                            
-                            self.addEventListener('fetch', (event) => {
-                                // Basic fetch handler
-                                event.respondWith(fetch(event.request));
-                            });
-                        `;
-                        
-                        const blob = new Blob([swContent], { type: 'application/javascript' });
-                        const swURL = URL.createObjectURL(blob);
-                        
-                        const registration = await navigator.serviceWorker.register(swURL);
-                        console.log('ServiceWorker registration successful with scope: ', registration.scope);
-                    } catch (error) {
-                        console.log('ServiceWorker registration failed: ', error);
-                        // This is normal when running from file:// protocol
-                    }
-                }
             }
         }
 
@@ -681,7 +745,6 @@
                 localStorage.setItem('dailyLifeConfig', JSON.stringify(this.userConfig));
                 this.loginAfterSetup(newPassword);
             }
-            
             loginAfterSetup(password) {
                 const loginData = {
                     loggedIn: true,
